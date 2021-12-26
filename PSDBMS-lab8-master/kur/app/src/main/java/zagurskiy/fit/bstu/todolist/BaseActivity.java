@@ -3,10 +3,12 @@ package zagurskiy.fit.bstu.todolist;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -15,6 +17,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import zagurskiy.fit.bstu.todolist.activity.AddTaskActivity;
+import zagurskiy.fit.bstu.todolist.activity.MainActivity;
 import zagurskiy.fit.bstu.todolist.dataBase.DBHelper;
 import zagurskiy.fit.bstu.todolist.utils.ActivityType;
 
@@ -49,11 +52,8 @@ public class BaseActivity extends AppCompatActivity {
             dbHelper.initialization(db);
         }
 
-
         setListener(type, selectedDate);
         setData(type, selectedDate);
-
-
     }
 
     private void setListener(ActivityType type, LocalDate selectedDate) {
@@ -71,7 +71,7 @@ public class BaseActivity extends AppCompatActivity {
         tasks = XMLHelper.getTaskByCategory(this, type.getDisplayName());
         taskDate = selectedDate;
         displayName = findViewById(R.id.textView2);
-        String valueActivity = dbHelper.selectRaw(db,type, this);
+        String valueActivity = dbHelper.selectRaw(db, type, this);
         displayName.setText(valueActivity);
         setFilteredTasks(taskDate);
 
@@ -89,5 +89,16 @@ public class BaseActivity extends AppCompatActivity {
         filteredTasks = tasks.stream()
                 .filter(t -> t.isDisplayed(selectedDate))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                Intent intent = new Intent(this, MainActivity.class);
+                intent.putExtra("selectedDate", taskDate);
+                startActivity(intent);
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

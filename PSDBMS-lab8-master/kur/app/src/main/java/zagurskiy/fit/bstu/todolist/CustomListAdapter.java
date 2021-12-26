@@ -84,7 +84,7 @@ public class CustomListAdapter extends BaseAdapter {
 
         });
         checkItem.setOnClickListener(v -> {
-            tasks.get(position).setDone(true);
+            tasks.get(position).setDone(checkItem.isChecked());
             XMLHelper.writeXML(context, tasks);
             MainActivity.tasks = XMLHelper.readXML(context);
             this.notifyDataSetChanged();

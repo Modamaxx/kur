@@ -13,10 +13,6 @@
             android:name=".BaseActivity"
             android:exported="true" />
         <activity
-            android:name=".XPathActivity"
-            android:exported="true"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".activity.AddTaskActivity"
             android:exported="true"
             android:screenOrientation="portrait" />

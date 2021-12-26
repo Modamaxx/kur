@@ -10,8 +10,8 @@
         android:id="@+id/btnAddTaskWork"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="25dp"
-        android:layout_marginBottom="25dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="16dp"
         android:src="@drawable/icon_add"
         android:text="Добавить запись"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -20,17 +20,22 @@
 
     <ListView
         android:id="@+id/tasksListWork"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
+        android:layout_width="416dp"
+        android:layout_height="592dp"
+        android:layout_marginStart="4dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.457"
         tools:ignore="MissingConstraints" />
 
     <TextView
         android:id="@+id/textView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        tools:layout_editor_absoluteX="179dp"
-        tools:layout_editor_absoluteY="107dp" />
+        android:layout_width="221dp"
+        android:layout_height="45dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.013" />
 </androidx.constraintlayout.widget.ConstraintLayout>

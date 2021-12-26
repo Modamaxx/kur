@@ -1,4 +1,4 @@
-package karbanovich.fit.bstu.todolist;
+package zagurskiy.fit.bstu.todolist;
 
 import static org.junit.Assert.assertEquals;
 

@@ -1,4 +1,4 @@
-package karbanovich.fit.bstu.todolist;
+package zagurskiy.fit.bstu.todolist;
 
 import android.content.Context;
 
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
     public void useAppContext() {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        assertEquals("karbanovich.fit.bstu.todolist", appContext.getPackageName());
+        assertEquals("zagurskiy.fit.bstu.todolist", appContext.getPackageName());
     }
 }

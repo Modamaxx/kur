@@ -1,9 +1,5 @@
 package zagurskiy.fit.bstu.todolist.activity;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -12,9 +8,11 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import zagurskiy.fit.bstu.todolist.BaseActivity;
@@ -54,12 +52,7 @@ public class AddTaskActivity extends AppCompatActivity {
         actionBar = getSupportActionBar();
         description = findViewById(R.id.description);
         date = findViewById(R.id.date);
-//        category = findViewById(R.id.category);
         save = findViewById(R.id.btnSave);
-
-//        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.category_item, categories);
-//        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//        category.setAdapter(adapter);
     }
 
     private void setData() {
@@ -72,32 +65,38 @@ public class AddTaskActivity extends AppCompatActivity {
 
         editableTask = (Task) intent.getSerializableExtra("taskToEdit");
         if (editableTask == null) return;
+
         description.setText(editableTask.getDescription());
-        category.setSelection(Arrays.asList(categories).indexOf(editableTask.getCategory()));
         date.setText("Дата: " + editableTask.getDate());
 
     }
 
     private void setListeners() {
         save.setOnClickListener(view -> {
-            if (editableTask != null)
-                XMLHelper.deleteTask(this, editableTask);
-
             String descrip = description.getText().toString();
             if (descrip.equals(""))
                 descrip = " ";
+            Task task;
 
             Intent f = getIntent();
             activityType = (ActivityType) f.getExtras().get("activityType");
-            displayCategory= activityType.getDisplayName();
-            Task task = new Task(descrip, displayCategory, taskDate, false);
+            displayCategory = activityType.getDisplayName();
+
+            if (editableTask != null) {
+                XMLHelper.deleteTask(this, editableTask);
+                task = new Task(descrip, displayCategory, taskDate, editableTask.isDone());
+            } else {
+                task = new Task(descrip, displayCategory, taskDate, false);
+            }
+
+
             List<Task> tasks = XMLHelper.readXML(this);
 
             tasks.add(task);
             XMLHelper.writeXML(this, tasks);
             Intent intentStudyActivity = new Intent(this, BaseActivity.class);
             intentStudyActivity.putExtra("selectedDate", taskDate);
-            intentStudyActivity.putExtra("activityType",activityType);
+            intentStudyActivity.putExtra("activityType", activityType);
             startActivity(intentStudyActivity);
         });
     }
