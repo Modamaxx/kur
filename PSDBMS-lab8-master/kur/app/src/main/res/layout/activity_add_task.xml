@@ -7,17 +7,16 @@
     android:layout_margin="10dp"
     tools:context=".activity.AddTaskActivity">
 
+
     <EditText
         android:id="@+id/description"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="44dp"
         android:hint="Описание"
-        android:lines="2"
-        android:textColor="@color/black"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
 
     <TextView
         android:id="@+id/date"
@@ -30,7 +29,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         tools:ignore="MissingConstraints" />
-    <!--        app:layout_constraintTop_toBottomOf="@id/category"/>-->
+
 
     <Button
         android:id="@+id/btnSave"

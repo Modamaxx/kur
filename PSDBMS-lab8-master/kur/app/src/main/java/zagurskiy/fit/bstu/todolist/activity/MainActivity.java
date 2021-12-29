@@ -33,9 +33,6 @@ public class MainActivity extends AppCompatActivity {
     Button sportsButton;
     Button leisureButton;
 
-
-    public static List<Task> tasks;
-
     @Override
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,16 +40,14 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         binding();
-        setData();
         setListeners();
-
+        setData();
     }
 
     private void binding() {
         selectedDateButton = findViewById(R.id.btnSelectDate);
         selectedDate = findViewById(R.id.txtSelectDate);
         calendar = Calendar.getInstance();
-
 
         studyButton = findViewById(R.id.studyButton);
         workButton = findViewById(R.id.workButton);
@@ -65,7 +60,10 @@ public class MainActivity extends AppCompatActivity {
     private void setData() {
         try {
             localDate = LocalDate.parse(getIntent().getExtras().get("selectedDate").toString());
-            calendar.set(localDate.getYear(),localDate.getMonthValue(),localDate.getDayOfMonth());
+
+            calendar.set(Calendar.DAY_OF_MONTH, localDate.getDayOfMonth());
+            calendar.set(Calendar.MONTH, localDate.getMonthValue()-1);
+            calendar.set(Calendar.YEAR, localDate.getYear());
         } catch (Exception e) {
             localDate = Calendar.getInstance().getTime()
                     .toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
@@ -73,7 +71,6 @@ public class MainActivity extends AppCompatActivity {
             selectedDate.setText(localDate.toString());
         }
     }
-
 
     private void setListeners() {
 
@@ -88,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
         selectedDateButton.setOnClickListener(view ->
                 new DatePickerDialog(MainActivity.this, d,
                         calendar.get(Calendar.YEAR),
-                        calendar.get(Calendar.MONTH)-1,
+                        calendar.get(Calendar.MONTH),
                         calendar.get(Calendar.DAY_OF_MONTH))
                         .show());
 
@@ -128,11 +125,5 @@ public class MainActivity extends AppCompatActivity {
             intent.putExtra("activityType", ActivityType.LEISURE);
             startActivity(intent);
         });
-    }
-
-
-    @Override
-    public void onBackPressed() {
-        return;
     }
 }

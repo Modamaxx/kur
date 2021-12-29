@@ -1,43 +1,39 @@
 package zagurskiy.fit.bstu.todolist.activity;
 
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.time.LocalDate;
-import java.util.List;
 
 import zagurskiy.fit.bstu.todolist.BaseActivity;
 import zagurskiy.fit.bstu.todolist.R;
 import zagurskiy.fit.bstu.todolist.Task;
-import zagurskiy.fit.bstu.todolist.XMLHelper;
+import zagurskiy.fit.bstu.todolist.repository.DBHelper;
 import zagurskiy.fit.bstu.todolist.utils.ActivityType;
 
 public class AddTaskActivity extends AppCompatActivity {
 
-    //View
     ActionBar actionBar;
     EditText description;
     TextView date;
-    Spinner category;
     Button save;
 
-
+    DBHelper dbHelper;
+    SQLiteDatabase db;
     String displayCategory;
-    //Data
     LocalDate taskDate;
     ActivityType activityType;
-    Task editableTask;
-    String[] categories = {"Категория...", "Учеба", "Работа", "Сон", "Встречи", "Спорт", "Досуг"};
-
+    Task editedTask;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,54 +49,54 @@ public class AddTaskActivity extends AppCompatActivity {
         description = findViewById(R.id.description);
         date = findViewById(R.id.date);
         save = findViewById(R.id.btnSave);
+        dbHelper = new DBHelper(this);
+        db = dbHelper.getWritableDatabase();
     }
 
     private void setData() {
         actionBar.setDisplayHomeAsUpEnabled(true);
-        editableTask = null;
+        editedTask = null;
 
         Intent intent = getIntent();
         taskDate = LocalDate.parse(intent.getExtras().get("selectedDate").toString());
         this.date.setText("Дата: " + taskDate);
 
-        editableTask = (Task) intent.getSerializableExtra("taskToEdit");
-        if (editableTask == null) return;
+        editedTask = (Task) intent.getSerializableExtra("taskToEdit");
+        if (editedTask == null) return;
 
-        description.setText(editableTask.getDescription());
-        date.setText("Дата: " + editableTask.getDate());
-
+        description.setText(editedTask.getDescription());
     }
 
     private void setListeners() {
         save.setOnClickListener(view -> {
-            String descrip = description.getText().toString();
-            if (descrip.equals(""))
-                descrip = " ";
-            Task task;
-
-            Intent f = getIntent();
-            activityType = (ActivityType) f.getExtras().get("activityType");
+            String descriptionTask = description.getText().toString();
+            if(descriptionTask.length()==0){
+                Toast.makeText(this, "Проверьте введенные данные", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            Intent backActivityIntent = getIntent();
+            activityType = (ActivityType) backActivityIntent.getExtras().get("activityType");
             displayCategory = activityType.getDisplayName();
 
-            if (editableTask != null) {
-                XMLHelper.deleteTask(this, editableTask);
-                task = new Task(descrip, displayCategory, taskDate, editableTask.isDone());
+            if (editedTask != null) {
+                editedTask.setDescription(description.getText().toString());
+                dbHelper.update(db, editedTask);
             } else {
-                task = new Task(descrip, displayCategory, taskDate, false);
+                Task task = Task.builder()
+                        .description(descriptionTask)
+                        .category(displayCategory)
+                        .date(taskDate)
+                        .done(false)
+                        .build();
+                dbHelper.insert(db, task);
             }
 
-
-            List<Task> tasks = XMLHelper.readXML(this);
-
-            tasks.add(task);
-            XMLHelper.writeXML(this, tasks);
-            Intent intentStudyActivity = new Intent(this, BaseActivity.class);
-            intentStudyActivity.putExtra("selectedDate", taskDate);
-            intentStudyActivity.putExtra("activityType", activityType);
-            startActivity(intentStudyActivity);
+            Intent intentActivity = new Intent(this, BaseActivity.class);
+            intentActivity.putExtra("selectedDate", taskDate);
+            intentActivity.putExtra("activityType", activityType);
+            startActivity(intentActivity);
         });
     }
-
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
@@ -111,10 +107,5 @@ public class AddTaskActivity extends AppCompatActivity {
                 startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onBackPressed() {
-        return;
     }
 }

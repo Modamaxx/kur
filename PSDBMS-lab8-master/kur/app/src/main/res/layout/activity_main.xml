@@ -5,7 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_margin="10dp"
-    tools:context=".activity.MainActivity">
+    tools:context=".activity.MainActivity"
+    tools:layout_editor_absoluteX="-3dp"
+    tools:layout_editor_absoluteY="10dp">
 
     <Button
         android:id="@+id/btnSelectDate"
@@ -30,60 +32,60 @@
 
     <Button
         android:id="@+id/studyButton"
-        android:layout_width="134dp"
-        android:layout_height="66dp"
-        android:layout_marginStart="120dp"
-        android:layout_marginTop="88dp"
+        android:layout_width="135dp"
+        android:layout_height="80dp"
+        android:layout_marginStart="48dp"
+        android:layout_marginTop="108dp"
         android:text="Учеба"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/workButton"
-        android:layout_width="134dp"
-        android:layout_height="66dp"
-        android:layout_marginStart="120dp"
-        android:layout_marginTop="176dp"
+        android:layout_width="135dp"
+        android:layout_height="80dp"
+        android:layout_marginStart="208dp"
+        android:layout_marginTop="108dp"
         android:text="Работа"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/sleepButton"
-        android:layout_width="134dp"
-        android:layout_height="66dp"
-        android:layout_marginStart="120dp"
-        android:layout_marginTop="260dp"
+        android:layout_width="135dp"
+        android:layout_height="80dp"
+        android:layout_marginStart="48dp"
+        android:layout_marginTop="208dp"
         android:text="Сон"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/meetingsButton"
-        android:layout_width="154dp"
-        android:layout_height="82dp"
-        android:layout_marginStart="112dp"
-        android:layout_marginTop="356dp"
+        android:layout_width="135dp"
+        android:layout_height="80dp"
+        android:layout_marginStart="208dp"
+        android:layout_marginTop="208dp"
         android:text="Встречи"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/sportsButton"
-        android:layout_width="154dp"
-        android:layout_height="82dp"
-        android:layout_marginStart="116dp"
-        android:layout_marginTop="464dp"
+        android:layout_width="135dp"
+        android:layout_height="80dp"
+        android:layout_marginStart="48dp"
+        android:layout_marginTop="312dp"
         android:text="Спорт"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/leisureButton"
-        android:layout_width="154dp"
-        android:layout_height="82dp"
-        android:layout_marginStart="116dp"
-        android:layout_marginTop="576dp"
+        android:layout_width="136dp"
+        android:layout_height="80dp"
+        android:layout_marginStart="208dp"
+        android:layout_marginTop="312dp"
         android:text="Досуг"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

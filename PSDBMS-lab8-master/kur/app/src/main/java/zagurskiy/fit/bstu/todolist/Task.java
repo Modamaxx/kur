@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.util.Objects;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,8 +16,10 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
+@Builder
 public class Task implements Serializable {
 
+    private Integer id;
     private String description;
     private String category;
     private LocalDate date;
@@ -25,6 +28,6 @@ public class Task implements Serializable {
 
     public boolean isDisplayed(LocalDate selectedDate) {
         if (selectedDate.equals(date)) return true;
-        return selectedDate.equals(LocalDate.now()) && date.isBefore(selectedDate) && !done;
+        return selectedDate.equals(LocalDate.now());
     }
 }

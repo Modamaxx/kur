@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 
 import zagurskiy.fit.bstu.todolist.activity.AddTaskActivity;
 import zagurskiy.fit.bstu.todolist.activity.MainActivity;
-import zagurskiy.fit.bstu.todolist.dataBase.DBHelper;
+import zagurskiy.fit.bstu.todolist.repository.DBHelper;
 import zagurskiy.fit.bstu.todolist.utils.ActivityType;
 
 public class BaseActivity extends AppCompatActivity {
@@ -27,9 +27,11 @@ public class BaseActivity extends AppCompatActivity {
     DBHelper dbHelper;
     SQLiteDatabase db;
     Button addTaskButton;
-    LocalDate taskDate;
-    private List<Task> filteredTasks;
+    LocalDate selectedDate;
+    ActivityType type;
+    TextView itemDate;
     public static List<Task> tasks;
+    private List<Task> filteredTasks;
     private CustomListAdapter customListAdapter;
     ListView tasksList;
 
@@ -37,29 +39,27 @@ public class BaseActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_work);
+
         ActionBar actionBar = getSupportActionBar();
         actionBar.setHomeButtonEnabled(true);
         actionBar.setDisplayHomeAsUpEnabled(true);
+
         addTaskButton = findViewById(R.id.btnAddTaskWork);
         tasksList = findViewById(R.id.tasksListWork);
-        ActivityType type = (ActivityType) getIntent().getExtras().get("activityType");
-        LocalDate selectedDate = (LocalDate) getIntent().getExtras().get("selectedDate");
+        type = (ActivityType) getIntent().getExtras().get("activityType");
+        selectedDate = (LocalDate) getIntent().getExtras().get("selectedDate");
+        itemDate = findViewById(R.id.data);
+        itemDate.setText(selectedDate.toString());
+
         dbHelper = new DBHelper(this);
         db = dbHelper.getWritableDatabase();
 
-
-        if (!dbHelper.isExist(db)) {
-            dbHelper.initialization(db);
-        }
-
-        setListener(type, selectedDate);
-        setData(type, selectedDate);
+        setListener();
+        setData();
     }
 
-    private void setListener(ActivityType type, LocalDate selectedDate) {
+    private void setListener() {
         addTaskButton.setOnClickListener(view -> {
-            Intent f = getIntent();
-            taskDate = selectedDate;
             Intent intent = new Intent(this, AddTaskActivity.class);
             intent.putExtra("selectedDate", selectedDate);
             intent.putExtra("activityType", type);
@@ -67,28 +67,20 @@ public class BaseActivity extends AppCompatActivity {
         });
     }
 
-    private void setData(ActivityType type, LocalDate selectedDate) {
-        tasks = XMLHelper.getTaskByCategory(this, type.getDisplayName());
-        taskDate = selectedDate;
-        displayName = findViewById(R.id.textView2);
-        String valueActivity = dbHelper.selectRaw(db, type, this);
-        displayName.setText(valueActivity);
-        setFilteredTasks(taskDate);
+    private void setData() {
+        tasks = dbHelper.selectTasks(db, type.getDisplayName(), selectedDate.toString());
 
+        displayName = findViewById(R.id.displayName);
+        String valueActivity = type.getDisplayName();
+        displayName.setText(valueActivity);
+        setFilteredTasks(selectedDate);
         customListAdapter = CustomListAdapter.builder()
                 .tasks(filteredTasks)
                 .context(this)
-                .displayDate(false)
+                .doneDate(false)
                 .type(type)
                 .build();
         tasksList.setAdapter(customListAdapter);
-    }
-
-
-    private void setFilteredTasks(LocalDate selectedDate) {
-        filteredTasks = tasks.stream()
-                .filter(t -> t.isDisplayed(selectedDate))
-                .collect(Collectors.toList());
     }
 
     @Override
@@ -96,9 +88,16 @@ public class BaseActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case android.R.id.home:
                 Intent intent = new Intent(this, MainActivity.class);
-                intent.putExtra("selectedDate", taskDate);
+                intent.putExtra("selectedDate", selectedDate);
                 startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
+    }
+
+
+    private void setFilteredTasks(LocalDate selectedDate) {
+        filteredTasks = tasks.stream()
+                .filter(t -> t.isDisplayed(selectedDate))
+                .collect(Collectors.toList());
     }
 }

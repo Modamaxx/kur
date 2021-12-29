@@ -2,6 +2,7 @@ package zagurskiy.fit.bstu.todolist;
 
 import android.content.Context;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +19,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import zagurskiy.fit.bstu.todolist.activity.AddTaskActivity;
-import zagurskiy.fit.bstu.todolist.activity.MainActivity;
+import zagurskiy.fit.bstu.todolist.repository.DBHelper;
 import zagurskiy.fit.bstu.todolist.utils.ActivityType;
 
 @Getter
@@ -31,9 +32,8 @@ public class CustomListAdapter extends BaseAdapter {
     private List<Task> tasks;
     private Context context;
 
-    private boolean displayDate;
+    private boolean doneDate;
     private ActivityType type;
-
 
     public int getCount() {
         return tasks.size();
@@ -49,25 +49,19 @@ public class CustomListAdapter extends BaseAdapter {
         return 0;
     }
 
-    public void updateTasksList(List<Task> filteredTasks) {
-        tasks.clear();
-        tasks.addAll(filteredTasks);
-        this.notifyDataSetChanged();
-    }
-
     @Override
     public View getView(int position, View convertView, ViewGroup viewGroup) {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.task_item, null);
 
-        TextView itemDescription = (TextView) view.findViewById(R.id.itemDescription);
-        TextView itemCategory = (TextView) view.findViewById(R.id.itemCategory);
-        ImageButton editItem = (ImageButton) view.findViewById(R.id.btnEditItem);
-        ImageButton deleteItem = (ImageButton) view.findViewById(R.id.btnDeleteItem);
-        TextView itemDate = (TextView) view.findViewById(R.id.itemDate);
+        TextView itemDescription = view.findViewById(R.id.itemDescription);
+        ImageButton editItem = view.findViewById(R.id.btnEditItem);
+        ImageButton deleteItem = view.findViewById(R.id.btnDeleteItem);
 
-        CheckBox checkItem = (CheckBox) view.findViewById(R.id.check);
+        CheckBox checkItem = view.findViewById(R.id.check);
 
+        DBHelper dbHelper = new DBHelper(context);
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
         editItem.setOnClickListener(v -> {
             Intent intent = new Intent(context, AddTaskActivity.class);
             intent.putExtra("selectedDate", tasks.get(position).getDate());
@@ -77,24 +71,21 @@ public class CustomListAdapter extends BaseAdapter {
         });
 
         deleteItem.setOnClickListener(v -> {
-            tasks.remove(tasks.get(position));
-            XMLHelper.writeXML(context, tasks);
-            MainActivity.tasks = XMLHelper.readXML(context);
-            this.notifyDataSetChanged();
+            Task deleteTask = tasks.get(position);
+            dbHelper.delete(db, deleteTask.getId().toString());
 
+            tasks.remove(deleteTask);
+            this.notifyDataSetChanged();
         });
         checkItem.setOnClickListener(v -> {
-            tasks.get(position).setDone(checkItem.isChecked());
-            XMLHelper.writeXML(context, tasks);
-            MainActivity.tasks = XMLHelper.readXML(context);
+            Task task = tasks.get(position);
+            task.setDone(checkItem.isChecked());
+
+            dbHelper.update(db, task);
             this.notifyDataSetChanged();
         });
-
         checkItem.setChecked(tasks.get(position).isDone());
         itemDescription.setText(tasks.get(position).getDescription());
-        itemCategory.setText(tasks.get(position).getCategory());
-        itemDate.setText("Дата: " + tasks.get(position).getDate());
-
         return view;
     }
 }
